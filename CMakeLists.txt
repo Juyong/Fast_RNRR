@@ -45,7 +45,7 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 include_directories("./include/")
 include_directories("./include/Libigl/include/")
 
-#--- openmesh lib
+#--- openmesh and opencv libs
 target_link_libraries(${PROJECT_NAME}
     OpenMeshCore OpenMeshTools
     ${OpenCV_LIBS})
