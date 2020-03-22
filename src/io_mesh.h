@@ -178,7 +178,6 @@ std::string num2str(int num, const int size, bool is_add0)
         }
     }
     std::string s_num(s_id);
-   // std::cout << "num = " << num << " s_num = " << s_num << " s.size = " << s_num.size() << std::endl;
     return s_num.substr(pos, size-pos);
 }
 

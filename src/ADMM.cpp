@@ -65,8 +65,6 @@ void ADMM::Initialize()
     mat_ADMM_C_.resize(n_src_vertex_, 3);
     weight_d_.resize(n_src_vertex_);
     weight_s_.resize(src_mesh_->n_halfedges());
-    //ADMM coeff
-    //pars_.alpha = pars_.alpha/src_mesh_->n_halfedges() * src_mesh_->n_vertices();
 }
 double ADMM::DoNonRigid()
 {

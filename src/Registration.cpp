@@ -31,21 +31,6 @@ Registration::~Registration()
         delete target_tree;
         target_tree = NULL;
     }
-//    if (src_mesh_ != NULL)
-//    {
-//        delete src_mesh_;
-//        src_mesh_ = NULL;
-//    }
-//    if (tar_mesh_ != NULL)
-//    {
-//        delete tar_mesh_;
-//        tar_mesh_ = NULL;
-//    }
-//    if(pgeodesic_ != NULL)
-//    {
-//        delete pgeodesic_;
-//        pgeodesic_ = NULL;
-//    }
 }
 
 // initialize before rigid transformation
@@ -124,7 +109,7 @@ double Registration::DoRigid()
     Eigen::Affine3d old_T;
 
     //std::cout << "before for loop done !" << std::endl;
-    corres_pair_ids_.setZero();
+	corres_pair_ids_.setZero();
     for(int iter = 0; iter < pars_.rigid_iters; iter++)
     {
         for (int i = 0; i < correspondence_pairs_.size(); i++)
@@ -262,10 +247,14 @@ void Registration::LandMarkCorres(VPairs & corres)
     n_landmark_nodes_ = pars_.landmark_tar.size();
     for (int i = 0; i < n_landmark_nodes_; i++)
     {
-        corres_pair_ids_[pars_.landmark_src[i]] = 1;
+        //corres_pair_ids_[pars_.landmark_src[i]] = 1;
         std::pair<int, int> pair(pars_.landmark_src[i], pars_.landmark_tar[i]);
         corres.push_back(pair);
-    }
+		if (pair.first > n_src_vertex_ || pair.first < 0)
+			std::cout << "Error: source index in Landmark is out of range!" << std::endl;
+		if (pair.second > n_src_vertex_ || pair.second < 0)
+			std::cout << "Error: target index in Landmark is out of range!" << std::endl;
+	}
     std::cout << " use landmark and landmark is ... " << pars_.landmark_src.size() << std::endl;
 }
 
@@ -476,114 +465,8 @@ int Registration::CalcSHOTfeature(Mesh* mesh, KDtree* kdtree, int nFeats, cv::Ma
     }
     Features = features;
     return nActualFeat;
-//    return 0;
-
 }
 
-//////////////////////////////////////////////////
-// version before 2019.11.2
-////////////////////////////////////////////////////
-//void Registration::FindSHOTCorrespondence(VPairs & correspondence_pairs)
-//{
-
-//    CmdLineParams params;
-//    params.nFeat = std::min(n_src_vertex_, n_tar_vertex_);
-//    params.radiusMR = 3;
-
-//    if (n_src_vertex_&& n_tar_vertex_)
-//    {
-//        // calculate average edges' length;
-//        double meshRes = CalcEdgelength(src_mesh_, 1);
-//        double meshRes2 = CalcEdgelength(tar_mesh_, 1);
-
-//        // extract features from src mesh;
-//        Eigen::Matrix3Xd src_points(3,n_src_vertex_);
-//        for (auto it = src_mesh_->vertices_begin(); it != src_mesh_->vertices_end(); it++)
-//        {
-//            src_points(0, (*it).idx()) = src_mesh_->point(*it)[0];
-//            src_points(1, (*it).idx()) = src_mesh_->point(*it)[1];
-//            src_points(2, (*it).idx()) = src_mesh_->point(*it)[2];
-//        }
-//        KDtree *src_tree = new KDtree(src_points);
-//        Random3DDetector detector(n_src_vertex_, false, meshRes * params.radiusMR, params.minNeighbors);
-//        Feature3D* feat;
-//        int nActualFeat = detector.extract(src_mesh_, src_tree , feat);
-//        std::cout << "src extrect done!" << std::endl;
-
-//        Random3DDetector detector2(n_tar_vertex_, false, meshRes2 * params.radiusMR, params.minNeighbors);
-//        Feature3D* feat2;
-//        int nActualFeat2 = detector2.extract(tar_mesh_, target_tree, feat2);
-//        std::cout << "tar extrect done!" << std::endl;
-
-
-//        // set shot params;
-//        SHOTParams shotParams;
-//        shotParams.radius = meshRes * params.radiusMR;
-//        shotParams.localRFradius = meshRes * params.radiusMR;
-//        shotParams.minNeighbors = params.minNeighbors;
-//        shotParams.shapeBins = params.shotShapeBins;
-//        shotParams.colorBins = params.shotColorBins;
-//        shotParams.describeColor = params.describeColor;
-//        shotParams.describeShape = params.describeShape;
-//        shotParams.nThreads = params.nThreads;
-//        shotParams.describeColor = false;
-//        shotParams.shapeBins = 10;
-
-//        SHOTDescriptor descriptor(shotParams);
-
-//        double** desc;
-//        descriptor.describe(src_mesh_, src_tree, feat, desc, nActualFeat);
-//        std::cout << "src describe done!" << std::endl;
-//        cv::Mat features(params.nFeat, descriptor.getDescriptorLength(), CV_32FC1);
-//        for (int i = 0; i < nActualFeat; i++)
-//        {
-//            for (int j = 0; j < descriptor.getDescriptorLength(); j++)
-//            {
-//                features.at<float>(i, j) = desc[i][j];
-//            }
-//        }
-
-
-//        double** tarDesc;
-//        descriptor.describe(tar_mesh_, target_tree, feat2, tarDesc, nActualFeat2);
-//        std::cout << "tar describe done!" << std::endl;
-
-//        cv::flann::Index kdtree(features, cv::flann::KDTreeIndexParams());
-//        std::vector<float> dists;
-//        dists.resize(2);
-//        std::vector<int> knn;
-//        knn.resize(2);
-//        int correctMatch = 0, totalMatch = 0;
-
-//        correspondence_pairs.clear();
-//        for (int i = 0; i < nActualFeat2; i++)
-//        {
-//            std::vector<float> query;
-//            for (int j = 0; j < descriptor.getDescriptorLength(); j++)
-//                query.push_back(tarDesc[i][j]);
-
-//            kdtree.knnSearch(query, knn, dists, 2, cv::flann::SearchParams());
-
-//            assert(dists[0] <= dists[1]);
-
-//            if (dists[0] <= params.matchTh * params.matchTh * dists[1])
-//            {
-//                //printf("Match %d: %d\n", i, knn[0]);
-//                std::pair<int, int> pair(i, knn[0]);
-//                correspondence_pairs.push_back(pair);
-//                if (i == knn[0])
-//                {
-//                    correctMatch++;
-//                }
-
-//                totalMatch++;
-//            }
-//         }
-//        printf("\n\nDescribed keypoints: %d. \nCorrect Matches: %d out of %d. \nMatches under threshold: %d. \nRecall: %f, 1-Precision: %f\n",
-//            nActualFeat, correctMatch, totalMatch, nActualFeat - totalMatch, correctMatch*1.0 / nActualFeat, (totalMatch - correctMatch)*1.0 / totalMatch);
-//        delete src_tree;
-//    }
-//}
 
 // *type: 0 :median, 1: average
 double Registration::CalcEdgelength(Mesh* mesh, int type)

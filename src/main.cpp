@@ -32,7 +32,6 @@ int main(int argc, char **argv)
 
     bool use_demean = true;
 
-
     enum METHOD {NICP, RPTS, SVR, QNWELSCH} method=QNWELSCH;
     std::string res_folder;
 
@@ -60,12 +59,12 @@ int main(int argc, char **argv)
     }
     else
     {
-        std::cout << "Example: ./data/src.obj ./data/tar.obj ./data/res.obj" << std::endl;
+        std::cout << "Usage: <srcFile> <tarFile> <outFile>\n    or <srcFile> <tarFile> <outFile> <regMethod> <landmarkFile>" << std::endl;
         exit(0);
     }
 
     // Setting paras
-    paras.alpha = 1.0;
+    paras.alpha = 1;
     paras.beta = 1000.0;
 
     paras.max_inner_iters = 20;
@@ -112,8 +111,6 @@ int main(int argc, char **argv)
     Timer::EventID time1 = time.get_time();
     reg->rigid_init(src_mesh, tar_mesh, paras);
 
-
-    //double time2 = omp_get_wtime();
     Timer::EventID time2 = time.get_time();
     std::cout << "rgid registration... " << std::endl;
     reg->DoRigid();
@@ -123,7 +120,7 @@ int main(int argc, char **argv)
     reg->Initialize();
     Timer::EventID time4 = time.get_time();
     reg->pars_.non_rigid_init_time = time.elapsed_time(time3, time4);
-    std::cout << "non-rgid registration... " << std::endl;
+    std::cout << "non-rigid registration... " << std::endl;
     reg->DoNonRigid();
     Timer::EventID time5 = time.get_time();
 
@@ -135,7 +132,6 @@ int main(int argc, char **argv)
 
     if(use_demean)
         src_mesh.data(src_mesh.vertex_handle(0)).mesh_trans =  tar_mesh.data(tar_mesh.vertex_handle(0)).mesh_trans;
-
 
     write_data(out_file.c_str(), src_mesh, use_demean, scale);
     std::cout<< "write result to " << out_file << std::endl;

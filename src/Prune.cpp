@@ -27,7 +27,6 @@ void Prune::Initialize(hgeodesic* geo, VPairs& corres, double c_0)
     k_ab.setZero();
     for(int i = 0; i < corres.size(); i++)
     {
-        double t1 = omp_get_wtime();
 
         Eigen::VectorXd dist1(geo->n_src_vertices);
         Eigen::VectorXd dist2(geo->n_tar_vertices);
@@ -65,7 +64,6 @@ void Prune::Initialize(hgeodesic* geo, VPairs& corres, double c_0)
     {
         confidence_scores[i] = K_.col(i).sum()/total_dist;
     }
-    //std::cout << "confidence score = " << confidence_scores.sum() << std::endl;
 }
 
 void Prune::RunPruning(std::vector<std::pair<int, int>>& corres)
