@@ -1,7 +1,9 @@
-# Fast_FNRR
+# Fast_RNRR
 This repository includes the source code the paper "Quasi-Newton Solver for Robust Non-Rigid Registration" (CVPR2020).
 
-Authors: Yuxin Yao, [Bailin Deng](http://www.bdeng.me/), [Weiwei Xu](http://www.cad.zju.edu.cn/home/weiweixu/) and [Juyong Zhang](http://staff.ustc.edu.cn/~juyong/) .
+Authors: Yuxin Yao, [Bailin Deng](http://www.bdeng.me/), [Weiwei Xu](http://www.cad.zju.edu.cn/home/weiweixu/) and [Juyong Zhang](http://staff.ustc.edu.cn/~juyong/).
+
+This code is protected under patent. It can be only used for research purposes. If you are interested in business purposes/for-profit use, please contact Juyong Zhang (the corresponding author, email: juyong@ustc.edu.cn).
 
 # Dependencies
 1. [OpenMesh](https://www.graphics.rwth-aachen.de/software/openmesh/)
@@ -30,7 +32,7 @@ $ NonRigidreg <srcFile> <tarFile> <outFile> <regMethod> <landmarkFile>
 `<regMethod>` and `<landmarkFile>` can be ignored, our robust non-rigid registration method without landmarks will be used in this case.
 
 ## Notes
-1. This code supports non-rigid registration from mesh to mesh or point cloud. If the calculation method of geodesics are changed to support point clouds, our method is also applicable when template is a point cloud.
+1. This code supports non-rigid registration from mesh to mesh or point cloud. If the method of geodesics computation supports point clouds, our method is also applicable when template format is point cloud.
 2. This code contains the calculation of SHOT features and the diffusion pruning method, these methods can be used by setting `paras.corres_type = SHOT` and `paras.pruning_type = DIFFUSION` in `main.cpp`.
 
 # Citation
@@ -45,8 +47,6 @@ Please cite the following papers if it helps your research:
 ```
 
 # Acknowledgement
-The [SHOT implementation](https://github.com/fedassa/SHOT) provided by the author was used in the calculation part of the shot feature 
-and the construction part of deformation graph in the source code of http://www.liuyebin.com/nonrigid.html was adopted.
+We adopt the [SHOT implementation](https://github.com/fedassa/SHOT) to compute the shot feature. To construct the deformation graph, we adopt the method in the source code of http://www.liuyebin.com/nonrigid.html.
 
-# License
-This code is protected under patent. It is for research purposes only at your university (research institution) only. If you are interested in business purposes/for-profit use, please contact Prof.Zhang(the corresponding author, email: juyong@ustc.edu.cn).
+This work was supported by the National Natural Science Foundation of China (No. 61672481), and Youth Innovation Promotion Association CAS (No. 2018495).
