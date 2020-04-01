@@ -91,7 +91,7 @@ namespace svr
             }
         }
 
-        std::cout << "m_radius = " << m_sampleRadius << std::endl;
+        //std::cout << "m_radius = " << m_sampleRadius << std::endl;
     }
 
     // type =1 fixed radius, type = 0, fixed number of nodes;

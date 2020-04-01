@@ -82,14 +82,14 @@ struct RegParas
         normal_threshold = M_PI / 3;
         distance_threshold = 0.3;
         use_welsch_function = true;
-        rigid_iters = 10;
+        rigid_iters = 15;
         use_landmark = false;
         calc_gt_err = false;
 
         // dynamic welsch method parameters
         use_Dynamic_nu = true;
         Data_nu = 0.0;
-        Smooth_nu = 0.3;
+        Smooth_nu = 40;
         Data_initk =10;
         Data_endk = 0.5;
         stop = 1e-3;

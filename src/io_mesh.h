@@ -68,7 +68,7 @@ void printBasicMeshInfo(Mesh& mesh, bool use_demean)
         break;
     }
 
-    printf("Information of the input mesh:\nVertex : %d;\nFace : %d;\nEdge : %d, HalfEdge : %d\n",
+    printf("Information of the input mesh:\nVertex : %d;\nFace : %d;\nEdge : %d, HalfEdge : %d\n\n",
         mesh.n_vertices(),mesh.n_faces(),mesh.n_edges(),mesh.n_halfedges());
 
     OpenMesh::Vec3d MeshScales;

@@ -24,8 +24,6 @@ int main(int argc, char **argv)
     paras.pruning_type = NONE;
 
     // sample
-    paras.is_unifom_sample = true;
-    paras.is_allvertices_smooth = false;
     paras.print_each_step_info = false;
     paras.use_distance_reject = false;
     paras.use_normal_reject = false;
@@ -83,11 +81,12 @@ int main(int argc, char **argv)
     Registration* reg;
     switch (method)
     {
-    case QNWELSCH:
-    {
-        reg = new QNwelsch;
-        break;
-    }
+	case NICP:
+	{
+		reg = new NonrigidICP;
+
+		break;
+	}
     case RPTS:
     {
         reg = new ADMM;
@@ -98,12 +97,11 @@ int main(int argc, char **argv)
         reg = new SVRL0;
         break;
     }
-    case NICP:
-    {
-        reg = new NonrigidICP;
-
-        break;
-    }
+	case QNWELSCH:
+	{
+		reg = new QNwelsch;
+		break;
+	}
     }
 
     Timer time;
