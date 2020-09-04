@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(NonRigidreg)
+project(Fast_RNRR)
 
 #--- CMake configuration
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -13,9 +13,6 @@ find_package(OpenMP QUIET)
 if(OPENMP_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 endif()
-
-#--- OpenCV
-find_package( OpenCV REQUIRED )
 
 #--- Eigen3
 find_package(Eigen3 REQUIRED)
@@ -36,19 +33,17 @@ find_package(NanoFlann REQUIRED)
 include_directories(${NANOFLANN_INCLUDE_DIR})
 
 #--- Build example
-include_directories(./src/)
-file(GLOB SOURCES "./src/*.cpp")
-file(GLOB HEADERS "./src/*.h")
+include_directories("./src/")
+file(GLOB SOURCES "./src/*.cpp" "./src/geodesic/*.cpp" "./src/tools/*.cpp")
+file(GLOB HEADERS "./src/*.h" "./src/geodesic/*.h" "./src/tools/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 #--- Libigl
-include_directories("./include/")
-include_directories("./include/Libigl/include/")
+include_directories("./library/libigl/include/")
 
-#--- openmesh and opencv libs
+#--- openmesh libs
 target_link_libraries(${PROJECT_NAME}
-    OpenMeshCore OpenMeshTools
-    ${OpenCV_LIBS})
+    OpenMeshCore OpenMeshTools)
 
 
 if(APPLE OR UNIX)
