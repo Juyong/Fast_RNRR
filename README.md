@@ -8,10 +8,24 @@ This code is protected under patent. It can be only used for research purposes. 
 ## Dependencies
 1. [OpenMesh](https://www.graphics.rwth-aachen.de/software/openmesh/)
 2. [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-3. [libigl](https://github.com/libigl/libigl)
 
 ## Compilation
-The code is compiled using [CMake](https://cmake.org/) and tested on Ubuntu 16.04 (gcc5.4.0) and on Windows with Visual Studio 2015. An executable `Fast_RNRR` will be generated.
+The code is compiled using [CMake](https://cmake.org/) and tested on Ubuntu 16.04 (gcc5.4.0) and on Windows with Visual Studio 2015. 
+Follow the following steps to compile the code:
+
+1) Make sure Eigen and OpenMesh is installed. 
+
+2) Create a build folder 'build' within the root directory of the code
+
+3) Run cmake to generate the build files inside the build folder, and compile the source code:
+    - On linux, run the following commands within the build folder:
+    ```
+   $ cmake -DCMAKE_BUILD_TYPE=Release ..
+   $ make
+    ```
+    - On windows, use the cmake GUI to generate a visual studio solution file, and build the solution.
+
+4) Afterwards, there should be an executable `Fast_RNRR` generated.
 
 ## Usage
 The program is run with four input parameters:
@@ -41,7 +55,7 @@ This code supports non-rigid registration from a triangle mesh to a mesh or a po
 ### Parameter choices
 1. The weight parameters of `regularization term` and `rotation term` can be set in `paras.alpha` and `paras.beta` in `main.cpp` respectively. You can increase them to make the model more maintain the original characteristics, and decrease them to make deformed model closer to the target model. 
 2. If you need to reject correspondences with a large difference between distance or normal when looking for the closest point, you can set the `paras.distance_threshold`  and `paras.normal_threshold` in `main.cpp`.
-
+3. The radius parameter R of the deformation graph is set `R=5l`(`paras.uni_sample_radio = 5` in `main.cpp`) by default. If you want to reduce the number of graph nodes, increase this value, otherwise, reduce it. When  the vertices in the source model are not very uniform and the sampling radius is small, some graph nodes are not covered by any mesh vertices, and it will cause the error "Some points cannot be covered under the specified radius, please increase the radius". It can be solved by increasing the sampling radius(`paras.uni_sample_radio`). It is worth noting that the input source model must have no isolated points.
 
 ## Citation
 Please cite the following papers if it helps your research:

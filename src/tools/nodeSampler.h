@@ -51,7 +51,7 @@ namespace svr
         nodeSampler() {};
 
         // return sample radius
-        Scalar sample(Mesh &mesh, Scalar sampleRadiusRatio, sampleAxis axis);
+//        Scalar sample(Mesh &mesh, Scalar sampleRadiusRatio, sampleAxis axis);
         Scalar sampleAndconstuct(Mesh &mesh, Scalar sampleRadiusRatio, sampleAxis axis);
 
         void updateWeight(Mesh &mesh);

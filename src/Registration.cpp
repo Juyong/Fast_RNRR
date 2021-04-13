@@ -1,5 +1,5 @@
 #include "Registration.h"
-#include <igl/median.h>
+#include <median.h>
 
 
 #if (__cplusplus >= 201402L) || (defined(_MSC_VER) && _MSC_VER >= 1800)

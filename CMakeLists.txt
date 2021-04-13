@@ -38,9 +38,6 @@ file(GLOB SOURCES "./src/*.cpp" "./src/geodesic/*.cpp" "./src/tools/*.cpp")
 file(GLOB HEADERS "./src/*.h" "./src/geodesic/*.h" "./src/tools/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
-#--- Libigl
-include_directories("./library/libigl/include/")
-
 #--- openmesh libs
 target_link_libraries(${PROJECT_NAME}
     OpenMeshCore OpenMeshTools)

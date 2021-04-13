@@ -37,6 +37,7 @@ int main(int argc, char **argv)
     paras.alpha = 100.0;
     paras.beta =  100.0;
     paras.gamma = 1e8;
+    paras.uni_sample_radio = 5.0;
 
     paras.use_distance_reject = true;
     paras.distance_threshold = 0.05;

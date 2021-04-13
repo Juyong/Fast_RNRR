@@ -2,8 +2,6 @@
 #include "nodeSampler.h"
 #include "tools.h"
 
-#include <igl/heat_geodesics.h>
-#include <igl/read_triangle_mesh.h>
 #include "geodesic/geodesic_algorithm_exact.h"
 
 namespace svr
@@ -20,82 +18,6 @@ namespace svr
     //	Each node is not covered by any other node. And distance between each
     //	pair of nodes is at least sampling radius.
     //------------------------------------------------------------------------
-    // heat method
-   Scalar nodeSampler::sample(Mesh &mesh, Scalar sampleRadiusRatio, sampleAxis axis)
-    {
-        //	Save numbers of vertex and edge
-        m_meshVertexNum = mesh.n_vertices();
-        m_meshEdgeNum = mesh.n_edges();
-        m_mesh = & mesh;
-
-        //	Calculate average edge length of bound mesh
-        for (size_t i = 0; i < m_meshEdgeNum; ++i)
-        {
-            OpenMesh::EdgeHandle eh = mesh.edge_handle(i);
-            Scalar edgeLen = mesh.calc_edge_length(eh);
-            m_averageEdgeLen += edgeLen;
-        }
-        m_averageEdgeLen /= m_meshEdgeNum;
-
-        //	Sampling radius is calculated as averageEdgeLen multiplied by sampleRadiusRatio
-        m_sampleRadius = sampleRadiusRatio * m_averageEdgeLen;
-
-        //	Reorder mesh vertex along axis
-        std::vector<size_t> vertexReorderedAlongAxis(m_meshVertexNum);
-        size_t vertexIdx = 0;
-        std::generate(vertexReorderedAlongAxis.begin(), vertexReorderedAlongAxis.end(), [&vertexIdx]() -> size_t { return vertexIdx++; });
-        std::sort(vertexReorderedAlongAxis.begin(), vertexReorderedAlongAxis.end(), [&mesh, axis](const size_t &lhs, const size_t &rhs) -> bool {
-            size_t lhsIdx = lhs;
-            size_t rhsIdx = rhs;
-            OpenMesh::VertexHandle vhl = mesh.vertex_handle(lhsIdx);
-            OpenMesh::VertexHandle vhr = mesh.vertex_handle(rhsIdx);
-            Mesh::Point vl = mesh.point(vhl);
-            Mesh::Point vr = mesh.point(vhr);
-            return vl[axis] > vr[axis];
-        });
-
-        //	Sample nodes using radius of m_sampleRadius
-        size_t firstVertexIdx = vertexReorderedAlongAxis[0];
-        VectorX geoDistVector(m_meshVertexNum);
-        geoDistVector.setZero();
-
-        igl::HeatGeodesicsData<Scalar> data;
-        MatrixXX V1;
-        Eigen::MatrixXi F1;
-        data.use_intrinsic_delaunay = true;
-        Mesh2VF(mesh, V1, F1);
-        igl::heat_geodesics_precompute(V1, F1, data);
-
-        igl::heat_geodesics_solve(data, (Eigen::MatrixXi(1,1)<<firstVertexIdx).finished(), geoDistVector);
-        m_geoDistContainer.push_back(geoDistVector/2.0);
-        m_nodeContainer.emplace_back(0, firstVertexIdx);
-        VertexNodeIdx.resize(m_meshVertexNum, -1);
-
-        for (auto &vertexIdx : vertexReorderedAlongAxis)
-        {
-            bool IsNode = true;
-            for (size_t k = 0; k < m_geoDistContainer.size(); ++k)
-            {
-                Scalar dist = m_geoDistContainer.at(k)(vertexIdx);
-                if (dist < m_sampleRadius)
-                {
-                    IsNode = false;
-                    break;
-                }
-            }
-            if (IsNode)
-            {
-                geoDistVector.setZero();
-                igl::heat_geodesics_solve(data, (Eigen::MatrixXi(1,1)<<vertexIdx).finished(), geoDistVector);
-                m_geoDistContainer.push_back(geoDistVector/2.0);
-                m_nodeContainer.emplace_back(m_geoDistContainer.size() - 1, vertexIdx);
-                VertexNodeIdx[vertexIdx] = m_geoDistContainer.size()-1;
-            }
-        }
-
-        std::cout << "m_radius = " << m_sampleRadius << std::endl;
-        return m_sampleRadius;
-    }
 
 
     // Local geodesic calculation
